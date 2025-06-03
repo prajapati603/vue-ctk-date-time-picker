@@ -90,6 +90,7 @@
             :class="{'dark': darkMode}"
             class="component-container"
           >
+          <template v-if="demo.id === '8'">
             <h3>{{ demo.title }}</h3>
             <h4>{{ demo.description }}</h4>
             <hr>
@@ -176,6 +177,7 @@
                 </span>
               </div>
             </div>
+            {{ demo.value }} / {{ demo.orgValue }}
             <div class="component">
               <CtkDateTimePicker
                 :id="demo.options.id"
@@ -221,6 +223,7 @@
                 :disabled-weekly="demo.options.disabledWeekly"
                 :right="demo.options.right"
                 :no-clear-button="demo.options.noClearButton"
+                :behaviour="demo.options.behaviour"
               >
                 <input
                   v-if="demo.options && demo.options.slot && demo.options.slot.type === 'input'"
@@ -234,6 +237,7 @@
                 />
               </CtkDateTimePicker>
             </div>
+            </template>
           </div>
         </div>
       </div>
@@ -244,7 +248,9 @@
 <script>
   import CtkDateTimePicker from './VueCtkDateTimePicker'
   import CheckboxInput from './CheckboxInput'
-
+  import moment from 'moment'
+  window.moment = moment
+  const dateFormat = 'YYYY-MM-DD hh:mm a'
   export default {
     name: 'App',
     components: {
@@ -400,15 +406,24 @@
           {
             id: '8',
             title: 'Min and Max date with time in 12h-format',
-            description: 'minDate: 2019-03-03 8:10 pm, maxDate: 2019-06-24 9:14 am',
-            initial: '2019-03-03 8:10 pm',
-            value: '2019-03-06 8:20 pm',
+            description: `minDate: 2019-03-03 8:10 pm, maxDate: ${moment(new Date()).format(dateFormat)}`,
+            // description: `minDate: 2019-03-03 8:10 pm, maxDate: ${moment(new Date()).format('YYYY-MM-DD h:mm a')}`,
+            initial: '2019-03-03 8:10',
+            // value: null,
+            value: moment(new Date()).add(5, 'hours').add(19, 'days').format(dateFormat),
+            orgValue: '',
             editOption: false,
             options: {
-              format: 'YYYY-MM-DD h:mm a',
+              format: dateFormat,
+              formatted: 'YYYY-MM-DD hh:mm a',
               id: 'DateTimePicker',
-              minDate: '2019-03-03 8:10 pm',
-              maxDate: '2019-03-24 9:14 am'
+              // maxDate: moment(new Date()).add('hours', -4).format(dateFormat),
+              maxDate: moment().format(dateFormat),
+              behaviour: {
+                time: {
+                  nearestIfDisabled: true
+                }
+              }
             }
           },
           {
