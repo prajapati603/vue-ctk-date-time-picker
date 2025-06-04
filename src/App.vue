@@ -90,153 +90,153 @@
             :class="{'dark': darkMode}"
             class="component-container"
           >
-          <template v-if="demo.id === '8'">
-            <h3>{{ demo.title }}</h3>
-            <h4>{{ demo.description }}</h4>
-            <hr>
-            <div class="flex flex-wrap justify-content-between">
-              <p><b>Inititale value</b> : {{ demo.initial }}</p>
-              <p><b>v-model</b> = {{ demo.value || 'null' }}</p>
-            </div>
-            <hr>
-            <button
-              class="lm-btn option"
-              @click="demo.editOption = !demo.editOption"
-            >
-              Edit options
-            </button>
-            <div
-              v-show="demo.editOption"
-              class="flex flex-wrap component options"
-            >
-              <div class="flex-1">
-                <h4 style="margin-bottom: 10px;">
-                  String options
-                </h4>
-                <div
-                  v-for="str in stringOptions"
-                  :key="str"
-                  class="flex"
-                  style="margin-bottom: 10px;"
+            <template v-if="demo.id === '8'">
+              <h3>{{ demo.title }}</h3>
+              <h4>{{ demo.description }}</h4>
+              <hr>
+              <div class="flex flex-wrap justify-content-between">
+                <p><b>Inititale value</b> : {{ demo.initial }}</p>
+                <p><b>v-model</b> = {{ demo.value || 'null' }}</p>
+              </div>
+              <hr>
+              <button
+                class="lm-btn option"
+                @click="demo.editOption = !demo.editOption"
+              >
+                Edit options
+              </button>
+              <div
+                v-show="demo.editOption"
+                class="flex flex-wrap component options"
+              >
+                <div class="flex-1">
+                  <h4 style="margin-bottom: 10px;">
+                    String options
+                  </h4>
+                  <div
+                    v-for="str in stringOptions"
+                    :key="str"
+                    class="flex"
+                    style="margin-bottom: 10px;"
+                  >
+                    <input
+                      v-model="demo.options[str]"
+                      type="text"
+                    >
+                    <span style="margin-left: 15px;">
+                      {{ str }}
+                    </span>
+                  </div>
+                  <h4 style="margin-bottom: 10px;">
+                    Integer options
+                  </h4>
+                  <div
+                    v-for="int in intOptions"
+                    :key="int"
+                    class="flex"
+                    style="margin-bottom: 10px;"
+                  >
+                    <input
+                      v-model="demo.options[int]"
+                      type="number"
+                    >
+                    <span style="margin-left: 15px;">
+                      {{ int }}
+                    </span>
+                  </div>
+                </div>
+                <div class="flex-1">
+                  <h4 style="margin-bottom: 10px;">
+                    Boolean options
+                  </h4>
+                  <div
+                    v-for="opt in booleanOptions"
+                    :key="opt"
+                    class="flex"
+                    style="margin-bottom: 10px;"
+                  >
+                    <CheckboxInput
+                      :id="`${demo.id}${opt}`"
+                      v-model="demo.options[opt]"
+                      :disabled="opt === 'onlyDate' || opt === 'onlyTime' || opt === 'range'"
+                    />
+                    <span style="margin-left: 15px;">
+                      {{ opt }} {{ opt === 'onlyDate' || opt === 'onlyTime' || opt === 'range' ? '(disabled)' : '' }}
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <h4 style="margin-bottom: 10px;">
+                    Options not editable (is Array)
+                  </h4>
+                  <span
+                    v-for="opt in optionsNotEditable"
+                    :key="opt"
+                  >
+                    {{ opt + ', ' }}
+                  </span>
+                </div>
+              </div>
+              {{ demo.value }} / {{ demo.orgValue }}
+              <div class="component">
+                <CtkDateTimePicker
+                  :id="demo.options.id"
+                  v-model="demo.value"
+                  :only-date="demo.options.onlyDate"
+                  :only-time="demo.options.onlyTime"
+                  :range="demo.options.range"
+                  :format="demo.options.format"
+                  :formatted="demo.options.formatted"
+                  :output-format="demo.options.outputFormat"
+                  :inline="demo.options.inline"
+                  :color="demo.options.color"
+                  :button-color="demo.options.buttonColor"
+                  :no-header="demo.options.noHeader"
+                  :label="demo.options.label"
+                  :no-label="demo.options.noLabel"
+                  :auto-close="demo.options.autoClose"
+                  :error="demo.options.error"
+                  :hint="demo.options.hint"
+                  :open="demo.options.open"
+                  :dark="darkMode || demo.options.dark"
+                  :overlay="demo.options.overlay"
+                  :position="demo.options.position"
+                  :disabled="demo.options.disabled"
+                  :disabled-dates="demo.options.disabledDates"
+                  :disabled-hours="demo.options.disabledHours"
+                  :enabled-dates="demo.options.enabledDates"
+                  :minute-interval="demo.options.minuteInterval"
+                  :first-day-of-week="demo.options.firstDayOfWeek"
+                  :min-date="demo.options.minDate"
+                  :max-date="demo.options.maxDate"
+                  :no-weekends-days="demo.options.noWeekendDays"
+                  :no-shortcuts="demo.options.noShortcuts"
+                  :no-button="demo.options.noButton"
+                  :button-now-translation="demo.options.buttonNowTranslation"
+                  :no-button-now="demo.options.noButtonNow"
+                  :locale="demo.options.locale"
+                  :input-size="demo.options.inputSize"
+                  :custom-shortcuts="demo.options.customShortcuts"
+                  :persistent="demo.options.persistent"
+                  :no-keyboard="demo.options.noKeyboard"
+                  :no-value-to-custom-elem="demo.options.noValueToCustomElem"
+                  :disabled-weekly="demo.options.disabledWeekly"
+                  :right="demo.options.right"
+                  :no-clear-button="demo.options.noClearButton"
+                  :behaviour="demo.options.behaviour"
                 >
                   <input
-                    v-model="demo.options[str]"
+                    v-if="demo.options && demo.options.slot && demo.options.slot.type === 'input'"
                     type="text"
                   >
-                  <span style="margin-left: 15px;">
-                    {{ str }}
-                  </span>
-                </div>
-                <h4 style="margin-bottom: 10px;">
-                  Integer options
-                </h4>
-                <div
-                  v-for="int in intOptions"
-                  :key="int"
-                  class="flex"
-                  style="margin-bottom: 10px;"
-                >
-                  <input
-                    v-model="demo.options[int]"
-                    type="number"
-                  >
-                  <span style="margin-left: 15px;">
-                    {{ int }}
-                  </span>
-                </div>
-              </div>
-              <div class="flex-1">
-                <h4 style="margin-bottom: 10px;">
-                  Boolean options
-                </h4>
-                <div
-                  v-for="opt in booleanOptions"
-                  :key="opt"
-                  class="flex"
-                  style="margin-bottom: 10px;"
-                >
-                  <CheckboxInput
-                    :id="`${demo.id}${opt}`"
-                    v-model="demo.options[opt]"
-                    :disabled="opt === 'onlyDate' || opt === 'onlyTime' || opt === 'range'"
+                  <button
+                    v-else-if="demo.options && demo.options.slot && demo.options.slot.type === 'button'"
+                    type="button"
+                    class="lm-btn"
+                    style="margin: 0;"
                   />
-                  <span style="margin-left: 15px;">
-                    {{ opt }} {{ opt === 'onlyDate' || opt === 'onlyTime' || opt === 'range' ? '(disabled)' : '' }}
-                  </span>
-                </div>
+                </CtkDateTimePicker>
               </div>
-              <div>
-                <h4 style="margin-bottom: 10px;">
-                  Options not editable (is Array)
-                </h4>
-                <span
-                  v-for="opt in optionsNotEditable"
-                  :key="opt"
-                >
-                  {{ opt + ', ' }}
-                </span>
-              </div>
-            </div>
-            {{ demo.value }} / {{ demo.orgValue }}
-            <div class="component">
-              <CtkDateTimePicker
-                :id="demo.options.id"
-                v-model="demo.value"
-                :only-date="demo.options.onlyDate"
-                :only-time="demo.options.onlyTime"
-                :range="demo.options.range"
-                :format="demo.options.format"
-                :formatted="demo.options.formatted"
-                :output-format="demo.options.outputFormat"
-                :inline="demo.options.inline"
-                :color="demo.options.color"
-                :button-color="demo.options.buttonColor"
-                :no-header="demo.options.noHeader"
-                :label="demo.options.label"
-                :no-label="demo.options.noLabel"
-                :auto-close="demo.options.autoClose"
-                :error="demo.options.error"
-                :hint="demo.options.hint"
-                :open="demo.options.open"
-                :dark="darkMode || demo.options.dark"
-                :overlay="demo.options.overlay"
-                :position="demo.options.position"
-                :disabled="demo.options.disabled"
-                :disabled-dates="demo.options.disabledDates"
-                :disabled-hours="demo.options.disabledHours"
-                :enabled-dates="demo.options.enabledDates"
-                :minute-interval="demo.options.minuteInterval"
-                :first-day-of-week="demo.options.firstDayOfWeek"
-                :min-date="demo.options.minDate"
-                :max-date="demo.options.maxDate"
-                :no-weekends-days="demo.options.noWeekendDays"
-                :no-shortcuts="demo.options.noShortcuts"
-                :no-button="demo.options.noButton"
-                :button-now-translation="demo.options.buttonNowTranslation"
-                :no-button-now="demo.options.noButtonNow"
-                :locale="demo.options.locale"
-                :input-size="demo.options.inputSize"
-                :custom-shortcuts="demo.options.customShortcuts"
-                :persistent="demo.options.persistent"
-                :no-keyboard="demo.options.noKeyboard"
-                :no-value-to-custom-elem="demo.options.noValueToCustomElem"
-                :disabled-weekly="demo.options.disabledWeekly"
-                :right="demo.options.right"
-                :no-clear-button="demo.options.noClearButton"
-                :behaviour="demo.options.behaviour"
-              >
-                <input
-                  v-if="demo.options && demo.options.slot && demo.options.slot.type === 'input'"
-                  type="text"
-                >
-                <button
-                  v-else-if="demo.options && demo.options.slot && demo.options.slot.type === 'button'"
-                  type="button"
-                  class="lm-btn"
-                  style="margin: 0;"
-                />
-              </CtkDateTimePicker>
-            </div>
             </template>
           </div>
         </div>

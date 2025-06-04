@@ -101,7 +101,7 @@
   }
 
   const nearestMinutes = (interval, date, format) => {
-    const roundedMinutes = Math.ceil(date.minute() / interval) * interval;
+    const roundedMinutes = Math.ceil(date.minute() / interval) * interval
     return moment(date.clone().minute(roundedMinutes).second(0), format)
   }
 
@@ -293,7 +293,7 @@
               shortcut: payload.value }
       },
       getDateTimeToSend (value) {
-        const dateTime = typeof value !== 'undefined' ? value : this.value;
+        const dateTime = typeof value !== 'undefined' ? value : this.value
         const dateToSend = dateTime
           ? moment(dateTime, 'YYYY-MM-DD HH:mm')
           : null

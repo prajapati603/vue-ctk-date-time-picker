@@ -168,10 +168,10 @@
           minWidth: size
         }
       },
-      isDateAfterMaxDate (){
+      isDateAfterMaxDate () {
         return Boolean(
           moment(this.date).isAfter(moment(this.maxDate, 'YYYY-MM-DD'))
-        );
+        )
       },
       responsivePosition () {
         if (typeof window === 'undefined') return null

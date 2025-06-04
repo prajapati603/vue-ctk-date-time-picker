@@ -104,7 +104,7 @@
       minTime: { type: String, default: null },
       behaviour: { type: Object, default: () => ({}) },
       maxTime: { type: String, default: null },
-      isDateAfterMaxDate: { type: Boolean, default: false },
+      isDateAfterMaxDate: { type: Boolean, default: false }
     },
     data () {
       return {
@@ -181,33 +181,33 @@
         minEnabledHour = parseInt(minEnabledHour, 10)
         maxEnabledHour = parseInt(maxEnabledHour, 10)
 
-        if (( this.value && (minEnabledHour !== 0 || maxEnabledHour !== 23)) || !this.value || this.isDateAfterMaxDate) {
+        if ((this.value && (minEnabledHour !== 0 || maxEnabledHour !== 23)) || !this.value || this.isDateAfterMaxDate) {
           const enabledHours = [...Array(24)]
-            .map((_, i) => this.isTwelveFormat ? i+1 : i)
-            .filter(h => ( this.value &&(
-              this.isTwelveFormat && h > minEnabledHour || 
-              !this.isTwelveFormat && h >= minEnabledHour
+            .map((_, i) => this.isTwelveFormat ? i + 1 : i)
+            .filter(h => (this.value && (
+              (this.isTwelveFormat && h > minEnabledHour) ||
+              (!this.isTwelveFormat && h >= minEnabledHour)
             ) && h <= maxEnabledHour) && !this.isDateAfterMaxDate)
 
-          let nearestHour = null;
+          let nearestHour = null
           if (
-            enabledHours.length && 
-            !enabledHours.includes(this.hour) && 
-            this.behaviour && 
-            this.behaviour.time && 
-            this.behaviour.time.nearestIfDisabled && 
+            enabledHours.length &&
+            !enabledHours.includes(this.hour) &&
+            this.behaviour &&
+            this.behaviour.time &&
+            this.behaviour.time.nearestIfDisabled &&
             !this.isDateAfterMaxDate
           ) {
-            let hrsAfter12Pm = enabledHours.length > 12 ? enabledHours.length % 12 : 0
-            nearestHour = hrsAfter12Pm > 0 ? enabledHours[12+hrsAfter12Pm-1] :  enabledHours[enabledHours.length -1]
+            const hrsAfter12Pm = enabledHours.length > 12 ? enabledHours.length % 12 : 0
+            nearestHour = hrsAfter12Pm > 0 ? enabledHours[12 + hrsAfter12Pm - 1] : enabledHours[enabledHours.length - 1]
             this.hour = nearestHour  // eslint-disable-line
-            if(this.value){
+            if (this.value) {
               this.emitValue()
             }
           }
 
           const _disabledHours = [...Array(24)]
-            .map((_, i) => this.isTwelveFormat ? i+1 : i)
+            .map((_, i) => this.isTwelveFormat ? i + 1 : i)
             .filter(h => !enabledHours.includes(h))
             .map(h => h < 10 ? '0' + h : '' + h)
           this.disabledHours.forEach(h => _disabledHours.push(h))
@@ -246,22 +246,22 @@
           const enabledMinutes = [...Array(60)]
             .map((_, i) => i)
             .filter(m => this.value && (m >= minEnabledMinute && m <= maxEnabledMinute) && !this.isDateAfterMaxDate)
-          
-          let nearestEnabledMinute = null;
+
+          let nearestEnabledMinute = null
           if (
             this.minute &&
             enabledMinutes.length &&
-            !enabledMinutes.includes(this.minute) && 
-            this.behaviour && 
-            this.behaviour.time && 
-            this.behaviour.time.nearestIfDisabled && 
+            !enabledMinutes.includes(this.minute) &&
+            this.behaviour &&
+            this.behaviour.time &&
+            this.behaviour.time.nearestIfDisabled &&
             !this.isDateAfterMaxDate
           ) {
-            const maxTime = ['PM', 'pm', 'AM', 'am'].includes(this.apm) ? moment(this.maxTime, 'h:mm a') : moment(this.maxTime, 'HH:mm');
+            const maxTime = ['PM', 'pm', 'AM', 'am'].includes(this.apm) ? moment(this.maxTime, 'h:mm a') : moment(this.maxTime, 'HH:mm')
             const maxTimeHour = parseInt(maxTime.format('h'), 10) + (this.maxTime.toUpperCase().includes('PM') ? 12 : 0)
-            nearestEnabledMinute = maxTimeHour === this.hour ? parseInt(maxTime.format('mm'), 10) : 0;
+            nearestEnabledMinute = maxTimeHour === this.hour ? parseInt(maxTime.format('mm'), 10) : 0
             this.minute = nearestEnabledMinute // eslint-disable-line            
-            if(this.value){
+            if (this.value) {
               this.emitValue()
             }
           }
@@ -307,13 +307,13 @@
         return Math.round(scrollTop / itemHeight)
       },
       onScrollHours: debounce(function (scroll) {
-        const value = this.getValue(scroll) + (!this.apm && this.isTwelveFormat ? 1 : 0);
+        const value = this.getValue(scroll) + (!this.apm && this.isTwelveFormat ? 1 : 0)
         const hour = this.isTwelveFormat
-					? this.apm
-						? this.apm.toLowerCase() === 'am'
-							? value + 1
-							: (value + 1 + 12)
-						:value
+          ? this.apm
+            ? this.apm.toLowerCase() === 'am'
+              ? value + 1
+              : (value + 1 + 12)
+            : value
           : value
         if (this.isHoursDisabled(hour)) return
         this.hour = hour === 24 && !this.isTwelveFormat ? 23 : hour
@@ -327,7 +327,7 @@
         this.emitValue()
       }, 100),
       onScrollApms: debounce(function (scroll) {
-        if(this.apms.some(item=> item.disabled)) return;
+        if (this.apms.some(item => item.disabled)) return
         const value = this.getValue(scroll)
         if (this.apms && this.apms[value] && this.apm !== this.apms[value].value) {
           const newHour = this.apm === 'pm' || this.apm === 'PM' ? this.hour - 12 : this.hour + 12
@@ -365,16 +365,16 @@
         minEnabledHour = parseInt(minEnabledHour, 10)
         maxEnabledHour = parseInt(maxEnabledHour, 10)
 
-        if (( this.value && (minEnabledHour !== 0 || maxEnabledHour !== 23)) || !this.value || this.isDateAfterMaxDate) {
+        if ((this.value && (minEnabledHour !== 0 || maxEnabledHour !== 23)) || !this.value || this.isDateAfterMaxDate) {
           const enabledHours = [...Array(24)]
-            .map((_, i) => this.isTwelveFormat ? i+1 : i)
+            .map((_, i) => this.isTwelveFormat ? i + 1 : i)
             .filter(h => this.value && (
-                this.isTwelveFormat && h > minEnabledHour || 
-                !this.isTwelveFormat && h >= minEnabledHour
-              ) && !this.isDateAfterMaxDate)
+              (this.isTwelveFormat && h > minEnabledHour) ||
+              (!this.isTwelveFormat && h >= minEnabledHour)
+            ) && !this.isDateAfterMaxDate)
 
           const _disabledHours = [...Array(24)]
-            .map((_, i) => this.isTwelveFormat ? i+1 : i)
+            .map((_, i) => this.isTwelveFormat ? i + 1 : i)
             .filter(h => !enabledHours.includes(h))
             .map(h => h < 10 ? '0' + h : '' + h)
           this.disabledHours.forEach(h => _disabledHours.push(h))
@@ -408,8 +408,6 @@
             maxEnabledMinute = maxTimeHour === this.hour ? parseInt(maxTime.format('mm'), 10) : maxEnabledMinute
           }
         }
-        
-
 
         if ((this.value && (minEnabledMinute !== 0 || maxEnabledMinute !== 60)) || !this.value || this.isDateAfterMaxDate) {
           const enabledMinutes = [...Array(60)]
