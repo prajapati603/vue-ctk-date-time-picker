@@ -73,7 +73,8 @@
             :min-time="minTime"
             :max-time="maxTime"
             :behaviour="behaviour"
-            :is-date-after-max-date="isDateAfterMaxDate"
+            :is-date-time-after-max-date="isDateTimeAfterMaxDate"
+            :is-selected-date-same-as-max-date="isSelectedDateSameAsMaxDate"
           />
         </div>
         <ButtonValidate
@@ -168,9 +169,14 @@
           minWidth: size
         }
       },
-      isDateAfterMaxDate () {
+      isDateTimeAfterMaxDate () {
         return Boolean(
-          moment(this.date).isAfter(moment(this.maxDate, 'YYYY-MM-DD'))
+          moment(this.value, this.format).isAfter(moment(this.maxDate, this.format), 'date')
+        )
+      },
+      isSelectedDateSameAsMaxDate () {
+        return Boolean(
+          moment(this.value, this.format).isSame(moment(this.maxDate, this.format), 'date')
         )
       },
       responsivePosition () {

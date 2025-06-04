@@ -104,7 +104,8 @@
       minTime: { type: String, default: null },
       behaviour: { type: Object, default: () => ({}) },
       maxTime: { type: String, default: null },
-      isDateAfterMaxDate: { type: Boolean, default: false }
+      isDateTimeAfterMaxDate: { type: Boolean, default: false },
+      isSelectedDateSameAsMaxDate: { type: Boolean, default: true },
     },
     data () {
       return {
@@ -148,9 +149,39 @@
       apms () {
         return this.isTwelveFormat
           ? this.format.includes('A')
-            ? [{ value: 'AM', item: 'AM', disabled: this.isDateAfterMaxDate || !this.value }, { value: 'PM', item: 'PM', disabled: this.isDateAfterMaxDate || !this.value }]
-            : [{ value: 'am', item: 'am', disabled: this.isDateAfterMaxDate || !this.value }, { value: 'pm', item: 'pm', disabled: this.isDateAfterMaxDate || !this.value }]
+            ? [
+                { value: 'AM', item: 'AM', disabled: this.isAmDisabled }, 
+                { value: 'PM', item: 'PM', disabled: this.isPmDisabled }
+              ]
+            : [
+                { value: 'am', item: 'am', disabled: this.isAmDisabled }, 
+                { value: 'pm', item: 'pm', disabled: this.isPmDisabled }
+              ]
           : null
+      },
+      isAmDisabled () {
+        const maxTime = this.maxTime.toLowerCase()
+        if(this.isTwelveFormat && this.isSelectedDateSameAsMaxDate) {
+          return !(maxTime.includes('pm') || maxTime.includes('am'));
+        } 
+        else if(this.isDateTimeAfterMaxDate || !this.value){ 
+          return true
+        }
+        else {
+          return false;
+        }
+      },
+      isPmDisabled () {
+        const maxTime = this.maxTime.toLowerCase()
+        if(this.isTwelveFormat && this.isSelectedDateSameAsMaxDate) {
+          return !maxTime.includes('pm');
+        } 
+        else if(this.isDateTimeAfterMaxDate || !this.value){ 
+          return true
+        } 
+        else {
+          return false;
+        }
       },
       columns () {
         return [
@@ -181,13 +212,13 @@
         minEnabledHour = parseInt(minEnabledHour, 10)
         maxEnabledHour = parseInt(maxEnabledHour, 10)
 
-        if ((this.value && (minEnabledHour !== 0 || maxEnabledHour !== 23)) || !this.value || this.isDateAfterMaxDate) {
+        if ((this.value && (minEnabledHour !== 0 || maxEnabledHour !== 23)) || !this.value || this.isDateTimeAfterMaxDate) {
           const enabledHours = [...Array(24)]
             .map((_, i) => this.isTwelveFormat ? i + 1 : i)
             .filter(h => (this.value && (
               (this.isTwelveFormat && h > minEnabledHour) ||
               (!this.isTwelveFormat && h >= minEnabledHour)
-            ) && h <= maxEnabledHour) && !this.isDateAfterMaxDate)
+            ) && h <= maxEnabledHour) && !this.isDateTimeAfterMaxDate)
 
           let nearestHour = null
           if (
@@ -196,11 +227,15 @@
             this.behaviour &&
             this.behaviour.time &&
             this.behaviour.time.nearestIfDisabled &&
-            !this.isDateAfterMaxDate
+            !this.isDateTimeAfterMaxDate
           ) {
             const hrsAfter12Pm = enabledHours.length > 12 ? enabledHours.length % 12 : 0
             nearestHour = hrsAfter12Pm > 0 ? enabledHours[12 + hrsAfter12Pm - 1] : enabledHours[enabledHours.length - 1]
             this.hour = nearestHour  // eslint-disable-line
+            let apm = (this.apms || []).find(item => !item.disabled);
+            if(apm){
+              this.apm = apm.value;
+            }
             if (this.value) {
               this.emitValue()
             }
@@ -242,10 +277,10 @@
           }
         }
 
-        if ((this.value && (minEnabledMinute !== 0 || maxEnabledMinute !== 60)) || !this.value || this.isDateAfterMaxDate) {
+        if ((this.value && (minEnabledMinute !== 0 || maxEnabledMinute !== 60)) || !this.value || this.isDateTimeAfterMaxDate) {
           const enabledMinutes = [...Array(60)]
             .map((_, i) => i)
-            .filter(m => this.value && (m >= minEnabledMinute && m <= maxEnabledMinute) && !this.isDateAfterMaxDate)
+            .filter(m => this.value && (m >= minEnabledMinute && m <= maxEnabledMinute) && !this.isDateTimeAfterMaxDate)
 
           let nearestEnabledMinute = null
           if (
@@ -255,12 +290,16 @@
             this.behaviour &&
             this.behaviour.time &&
             this.behaviour.time.nearestIfDisabled &&
-            !this.isDateAfterMaxDate
+            !this.isDateTimeAfterMaxDate
           ) {
             const maxTime = ['PM', 'pm', 'AM', 'am'].includes(this.apm) ? moment(this.maxTime, 'h:mm a') : moment(this.maxTime, 'HH:mm')
             const maxTimeHour = parseInt(maxTime.format('h'), 10) + (this.maxTime.toUpperCase().includes('PM') ? 12 : 0)
             nearestEnabledMinute = maxTimeHour === this.hour ? parseInt(maxTime.format('mm'), 10) : 0
-            this.minute = nearestEnabledMinute // eslint-disable-line            
+            this.minute = nearestEnabledMinute // eslint-disable-line 
+            let apm = (this.apms || []).find(item => !item.disabled);
+            if(apm){
+              this.apm = apm.value;
+            }           
             if (this.value) {
               this.emitValue()
             }
@@ -365,13 +404,13 @@
         minEnabledHour = parseInt(minEnabledHour, 10)
         maxEnabledHour = parseInt(maxEnabledHour, 10)
 
-        if ((this.value && (minEnabledHour !== 0 || maxEnabledHour !== 23)) || !this.value || this.isDateAfterMaxDate) {
+        if ((this.value && (minEnabledHour !== 0 || maxEnabledHour !== 23)) || !this.value || this.isDateTimeAfterMaxDate) {
           const enabledHours = [...Array(24)]
             .map((_, i) => this.isTwelveFormat ? i + 1 : i)
             .filter(h => this.value && (
               (this.isTwelveFormat && h > minEnabledHour) ||
               (!this.isTwelveFormat && h >= minEnabledHour)
-            ) && !this.isDateAfterMaxDate)
+            ) && !this.isDateTimeAfterMaxDate)
 
           const _disabledHours = [...Array(24)]
             .map((_, i) => this.isTwelveFormat ? i + 1 : i)
@@ -409,10 +448,10 @@
           }
         }
 
-        if ((this.value && (minEnabledMinute !== 0 || maxEnabledMinute !== 60)) || !this.value || this.isDateAfterMaxDate) {
+        if ((this.value && (minEnabledMinute !== 0 || maxEnabledMinute !== 60)) || !this.value || this.isDateTimeAfterMaxDate) {
           const enabledMinutes = [...Array(60)]
             .map((_, i) => i)
-            .filter(m => this.value && (m >= minEnabledMinute && m <= maxEnabledMinute) && !this.isDateAfterMaxDate)
+            .filter(m => this.value && (m >= minEnabledMinute && m <= maxEnabledMinute) && !this.isDateTimeAfterMaxDate)
           return [...Array(60)]
             .map((_, i) => i)
             .filter(m => !enabledMinutes.includes(m))
